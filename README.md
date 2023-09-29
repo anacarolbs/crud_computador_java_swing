@@ -1,2 +1,7 @@
-# crud_computador_java_swing
-Projeto de estuda da UDF
+# CRUD JAVA SWING
+Projeto com a finalidade de fornecer um CRUD via interface Java Swing 
+
+## Tecnologia
++ Java Swing
++ JDBC Mysql
+
