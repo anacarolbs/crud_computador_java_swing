@@ -1,13 +1,13 @@
 package br.unidf.DAL;
 
 import br.unidf.DTO.ComputadorDTO;
+import static br.unidf.utils.MessageUtil.showMessage;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 
 public final class ComputadorDAL
         extends ConexaoMySQL {
@@ -18,9 +18,9 @@ public final class ComputadorDAL
             ps.setInt(1, computador.getComTamanhoMonitor());
             ps.setInt(2, computador.getComVelocidade());
             ps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Computador salvo com sucesso");
+            showMessage("Computador salvo com sucesso");
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Erro ao inserir o novo computador");
+            showMessage( "Erro ao inserir o novo computador");
         }
     }
 
@@ -32,9 +32,8 @@ public final class ComputadorDAL
             if (rs.next()) {
                 return newInstance(rs);
             }
-            JOptionPane.showMessageDialog(null, "Busca realizada com sucesso");
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Erro ao buscar computador por ID:: " + comID);
+            showMessage("Erro ao buscar computador por ID:: " + comID);
         }
         return null;
     }
@@ -50,7 +49,7 @@ public final class ComputadorDAL
             }
             return listaClientes;
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Erro ao buscar todos os computadores");
+            showMessage( "Erro ao buscar todos os computadores");
             return new ArrayList<>();
         }
     }
@@ -63,7 +62,7 @@ public final class ComputadorDAL
             ps.setInt(3, computador.getComId());
             ps.execute();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Erro ao atualizar os dados do computador");
+            showMessage("Erro ao atualizar os dados do computador");
         }
     }
 
@@ -73,7 +72,7 @@ public final class ComputadorDAL
             ps.setInt(1, comID);
             ps.execute();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Erro ao deletar o computador de ID: " + comID);
+            showMessage("Erro ao deletar o computador de ID: " + comID);
         }
     }
 
@@ -85,6 +84,7 @@ public final class ComputadorDAL
             computadorDTO.setComVelocidade(rs.getInt("comVelocidade"));
             return computadorDTO;
         } catch (SQLException ex) {
+            showMessage("Erro durante o parse dos dados");
             return null;
         }
     }
