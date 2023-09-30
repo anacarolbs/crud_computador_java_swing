@@ -1,10 +1,13 @@
 package br.unidf.UI;
 
+import br.unidf.BLL.ComputarModel;
 import br.unidf.DAL.ComputadorDAL;
 import br.unidf.DTO.ComputadorDTO;
 import br.unidf.utils.DocumenUtil;
 import static br.unidf.utils.MessageUtil.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.swing.event.DocumentEvent;
@@ -37,7 +40,7 @@ public class frmComputador extends javax.swing.JFrame {
         txtCodigoIDCom = DocumenUtil.getTextField();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        dgvClientes = new javax.swing.JTable();
+        tableComputer = new javax.swing.JTable();
         btnLimparCom = new javax.swing.JButton();
         btnPesquisarCom = new javax.swing.JButton();
         btnSairCom = new javax.swing.JButton();
@@ -106,7 +109,7 @@ public class frmComputador extends javax.swing.JFrame {
 
         jLabel3.setText("Tamanho do Monitor");
 
-        dgvClientes.setModel(new javax.swing.table.DefaultTableModel(
+        tableComputer.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -124,7 +127,15 @@ public class frmComputador extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(dgvClientes);
+        jScrollPane1.setViewportView(tableComputer);
+        if (tableComputer.getColumnModel().getColumnCount() > 0) {
+            tableComputer.getColumnModel().getColumn(0).setResizable(false);
+            tableComputer.getColumnModel().getColumn(0).setHeaderValue("Código (ID)");
+            tableComputer.getColumnModel().getColumn(1).setResizable(false);
+            tableComputer.getColumnModel().getColumn(1).setHeaderValue("Tamanho do Monitor");
+            tableComputer.getColumnModel().getColumn(2).setResizable(false);
+            tableComputer.getColumnModel().getColumn(2).setHeaderValue("Velocidade");
+        }
 
         btnLimparCom.setMnemonic('L');
         btnLimparCom.setText("Limpar");
@@ -147,12 +158,6 @@ public class frmComputador extends javax.swing.JFrame {
         btnSairCom.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSairComActionPerformed(evt);
-            }
-        });
-
-        txtTamanhoMonitorCom.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTamanhoMonitorComActionPerformed(evt);
             }
         });
 
@@ -237,7 +242,12 @@ public class frmComputador extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSairComActionPerformed
 
     private void btnIncluirComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIncluirComActionPerformed
+        if (this.btnAlterarCom.isEnabled()
+                || this.btnExcluirCom.isEnabled())
+            return;
+        
         ComputadorDTO computadorDTO = getFields();
+        computadorDTO.setComId(null);
         this.computadorDAL.incluirComputador(computadorDTO);
     }//GEN-LAST:event_btnIncluirComActionPerformed
 
@@ -265,12 +275,13 @@ public class frmComputador extends javax.swing.JFrame {
 
     private void btnMostrarTodosComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarTodosComActionPerformed
         this.computadorDTOs = this.computadorDAL.selecionarListaComputadores();
+        this.tableComputer.setModel(new ComputarModel(this.computadorDTOs));
     }//GEN-LAST:event_btnMostrarTodosComActionPerformed
 
     private void btnLimparComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparComActionPerformed
         this.txtCodigoIDCom.setEditable(true);
-        this.defaultInitBtn();
         this.clearAllFields();
+        this.defaultInitBtn();
     }//GEN-LAST:event_btnLimparComActionPerformed
 
     private void btnPesquisarComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarComActionPerformed
@@ -292,14 +303,11 @@ public class frmComputador extends javax.swing.JFrame {
         this.txtCodigoIDCom.setEditable(false);
         this.txtCodigoIDCom.setEnabled(false);
         this.btnPesquisarCom.setEnabled(false);
+        this.btnIncluirCom.setEnabled(false);
         this.btnExcluirCom.setEnabled(true);
         this.btnAlterarCom.setEnabled(true);
         
     }//GEN-LAST:event_btnPesquisarComActionPerformed
-
-    private void txtTamanhoMonitorComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTamanhoMonitorComActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTamanhoMonitorComActionPerformed
 
     private ComputadorDTO getFields() {
         Integer tamanhoMonitor = null;
@@ -344,6 +352,7 @@ public class frmComputador extends javax.swing.JFrame {
         
         this.btnLimparCom.setToolTipText("Limpar todos os campos");
         
+        this.tableComputer.setModel(new ComputarModel(Collections.EMPTY_LIST));
         
         DocumentListener documentListener = new DocumentListener() {
             @Override
@@ -543,13 +552,13 @@ public class frmComputador extends javax.swing.JFrame {
     private javax.swing.JButton btnMostrarTodosCom;
     private javax.swing.JButton btnPesquisarCom;
     private javax.swing.JButton btnSairCom;
-    private javax.swing.JTable dgvClientes;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tableComputer;
     private javax.swing.JTextField txtCodigoIDCom;
     private javax.swing.JTextField txtTamanhoMonitorCom;
     private javax.swing.JTextField txtVelocidadeCom;
