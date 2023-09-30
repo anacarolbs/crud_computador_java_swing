@@ -4,15 +4,14 @@ import br.unidf.BLL.ComputarModel;
 import br.unidf.DAL.ComputadorDAL;
 import br.unidf.DTO.ComputadorDTO;
 import br.unidf.utils.DocumenUtil;
+import static br.unidf.utils.DocumenUtil.*;
 import static br.unidf.utils.MessageUtil.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.PlainDocument;
 
 public class frmComputador extends javax.swing.JFrame {
 
@@ -306,7 +305,6 @@ public class frmComputador extends javax.swing.JFrame {
         this.btnIncluirCom.setEnabled(false);
         this.btnExcluirCom.setEnabled(true);
         this.btnAlterarCom.setEnabled(true);
-        
     }//GEN-LAST:event_btnPesquisarComActionPerformed
 
     private ComputadorDTO getFields() {
@@ -330,11 +328,12 @@ public class frmComputador extends javax.swing.JFrame {
     }
     
     private void clearAllFields(){
-        this.txtCodigoIDCom.setDocument(new PlainDocument());
         this.txtCodigoIDCom.setEditable(true);
         this.txtCodigoIDCom.setEnabled(true);
-        this.txtTamanhoMonitorCom.setDocument(new PlainDocument());
-        this.txtVelocidadeCom.setDocument(new PlainDocument());
+        this.txtCodigoIDCom.setDocument(getTextField().getDocument());
+        this.txtTamanhoMonitorCom.setDocument(getTextField().getDocument());
+        this.txtVelocidadeCom.setDocument(getTextField().getDocument());
+
     }
 
     private void defaultInitBtn() {
