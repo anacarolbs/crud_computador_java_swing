@@ -3,32 +3,26 @@ package br.unidf.UI;
 import br.unidf.DAL.ComputadorDAL;
 import br.unidf.DTO.ComputadorDTO;
 import br.unidf.utils.DocumenUtil;
-import java.text.ParseException;
+import static br.unidf.utils.MessageUtil.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.text.MaskFormatter;
+import java.util.Objects;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.PlainDocument;
 
 public class frmComputador extends javax.swing.JFrame {
 
     private ComputadorDAL computadorDAL;
     private List<ComputadorDTO> computadorDTOs;
-    MaskFormatter formatter = new MaskFormatter();
 
     public frmComputador() {
-        try {
-            this.formatter = new MaskFormatter();
-            this.formatter.setMask("#########");
-            computadorDAL = new ComputadorDAL();
-            this.computadorDTOs = new ArrayList<>();
-            initComponents();
-        } catch (ParseException ex) {
-            Logger.getLogger(frmComputador.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        initComponents();
+        computadorDAL = new ComputadorDAL();
+        this.computadorDTOs = new ArrayList<>();
+        this.defaultInitBtn();
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -110,12 +104,6 @@ public class frmComputador extends javax.swing.JFrame {
             }
         });
 
-        txtCodigoIDCom.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCodigoIDComActionPerformed(evt);
-            }
-        });
-
         jLabel3.setText("Tamanho do Monitor");
 
         dgvClientes.setModel(new javax.swing.table.DefaultTableModel(
@@ -159,6 +147,12 @@ public class frmComputador extends javax.swing.JFrame {
         btnSairCom.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSairComActionPerformed(evt);
+            }
+        });
+
+        txtTamanhoMonitorCom.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTamanhoMonitorComActionPerformed(evt);
             }
         });
 
@@ -249,12 +243,24 @@ public class frmComputador extends javax.swing.JFrame {
 
     private void btnAlterarComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarComActionPerformed
         ComputadorDTO computadorDTO = getFields();
-        this.computadorDAL.alterarComputador(computadorDTO);
+        if (this.txtCodigoIDCom.isEnabled())
+            showMessage("Não é possivel atualizar sem ter realizado uma pesquisado antes.");
+        else {
+            this.computadorDAL.alterarComputador(computadorDTO);
+            showMessage("Dados atualizado com sucesso!!!");
+        }
     }//GEN-LAST:event_btnAlterarComActionPerformed
 
     private void btnExcluirComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirComActionPerformed
-        ComputadorDTO computadorDTO = getFields();
-        this.computadorDAL.excluirComputador(computadorDTO.getComId());
+        if (this.txtCodigoIDCom.isEnabled())
+            showMessage("Não é possivel atualizar sem ter realizado uma pesquisado antes.");
+        else {
+            ComputadorDTO computadorDTO = getFields();
+            this.computadorDAL.excluirComputador(computadorDTO.getComId());
+            showMessage("Dado excluido com sucesso!!!");
+            btnLimparComActionPerformed(evt);
+            this.clearAllFields();
+        }
     }//GEN-LAST:event_btnExcluirComActionPerformed
 
     private void btnMostrarTodosComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarTodosComActionPerformed
@@ -262,45 +268,114 @@ public class frmComputador extends javax.swing.JFrame {
     }//GEN-LAST:event_btnMostrarTodosComActionPerformed
 
     private void btnLimparComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparComActionPerformed
-        this.txtCodigoIDCom.setText("");
-        this.txtTamanhoMonitorCom.setText("");
-        this.txtVelocidadeCom.setText("");
-        
-        this.txtCodigoIDCom.setEnabled(true);
+        this.txtCodigoIDCom.setEditable(true);
+        this.defaultInitBtn();
+        this.clearAllFields();
     }//GEN-LAST:event_btnLimparComActionPerformed
 
     private void btnPesquisarComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarComActionPerformed
-        if (!this.txtCodigoIDCom.getText().isBlank()) {
-            final Integer id = Integer.valueOf(this.txtCodigoIDCom.getText());
-            ComputadorDTO computadorDTO = this.computadorDAL.selecionarComputadorPorID(id);
-            this.txtCodigoIDCom.setText(computadorDTO.getComId().toString());
-            this.txtTamanhoMonitorCom.setText(computadorDTO.getComTamanhoMonitor().toString());
-            this.txtVelocidadeCom.setText(computadorDTO.getComVelocidade().toString());
-            this.txtCodigoIDCom.setEnabled(false);
+        if (this.txtCodigoIDCom.getText().isBlank()) {
+            return;
         }
+        
+        final Integer id = Integer.valueOf(this.txtCodigoIDCom.getText());
+        ComputadorDTO computadorDTO = this.computadorDAL.selecionarComputadorPorID(id);
+        if (Objects.isNull(computadorDTO)) {
+            showMessage("Dados não encontrado com o ID informado");
+            return;
+        }
+        
+        this.txtCodigoIDCom.setText(computadorDTO.getComId().toString());
+        this.txtTamanhoMonitorCom.setText(computadorDTO.getComTamanhoMonitor().toString());
+        this.txtVelocidadeCom.setText(computadorDTO.getComVelocidade().toString());
+        
+        this.txtCodigoIDCom.setEditable(false);
+        this.txtCodigoIDCom.setEnabled(false);
+        this.btnPesquisarCom.setEnabled(false);
+        this.btnExcluirCom.setEnabled(true);
+        this.btnAlterarCom.setEnabled(true);
+        
     }//GEN-LAST:event_btnPesquisarComActionPerformed
 
-    private void txtCodigoIDComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoIDComActionPerformed
+    private void txtTamanhoMonitorComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTamanhoMonitorComActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtCodigoIDComActionPerformed
+    }//GEN-LAST:event_txtTamanhoMonitorComActionPerformed
 
     private ComputadorDTO getFields() {
         Integer tamanhoMonitor = null;
         Integer velocidade = null;
         Integer id = null;
-        
-        if(!this.txtCodigoIDCom.getText().isBlank())
-            tamanhoMonitor =  Integer.valueOf(this.txtCodigoIDCom.getText());
-        
-        if(!this.txtTamanhoMonitorCom.getText().isBlank())
-            tamanhoMonitor =  Integer.valueOf(this.txtTamanhoMonitorCom.getText());
-       
-        if(!this.txtVelocidadeCom.getText().isBlank())
-            velocidade =  Integer.valueOf(this.txtVelocidadeCom.getText());
- 
+
+        if (!this.txtCodigoIDCom.getText().isBlank()) {
+            id = Integer.valueOf(this.txtCodigoIDCom.getText());
+        }
+
+        if (!this.txtTamanhoMonitorCom.getText().isBlank()) {
+            tamanhoMonitor = Integer.valueOf(this.txtTamanhoMonitorCom.getText());
+        }
+
+        if (!this.txtVelocidadeCom.getText().isBlank()) {
+            velocidade = Integer.valueOf(this.txtVelocidadeCom.getText());
+        }
+
         return new ComputadorDTO(id, tamanhoMonitor, velocidade);
     }
+    
+    private void clearAllFields(){
+        this.txtCodigoIDCom.setDocument(new PlainDocument());
+        this.txtCodigoIDCom.setEditable(true);
+        this.txtCodigoIDCom.setEnabled(true);
+        this.txtTamanhoMonitorCom.setDocument(new PlainDocument());
+        this.txtVelocidadeCom.setDocument(new PlainDocument());
+    }
 
+    private void defaultInitBtn() {
+        this.btnPesquisarCom.setEnabled(true);
+        this.btnPesquisarCom.setToolTipText("Buscar um computador por ID");
+        
+        this.btnIncluirCom.setEnabled(false);
+        this.btnIncluirCom.setToolTipText("Incluir um novo computador");
+        
+        this.btnExcluirCom.setEnabled(false);
+        this.btnExcluirCom.setToolTipText("Excluir o computador que foi pesquisado em tela");
+        
+        this.btnAlterarCom.setEnabled(false);
+        this.btnAlterarCom.setToolTipText("Alterar os dados do computador que foi pesquisado em tela");
+        
+        this.btnLimparCom.setToolTipText("Limpar todos os campos");
+        
+        
+        DocumentListener documentListener = new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                isValidInclude();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                isValidInclude();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                isValidInclude();
+            }
+        };
+        
+        this.txtTamanhoMonitorCom.getDocument().addDocumentListener(documentListener);
+        this.txtVelocidadeCom.getDocument().addDocumentListener(documentListener);
+    }
+    
+    private void isValidInclude(){
+       if (txtTamanhoMonitorCom.getText().isBlank()
+                || txtVelocidadeCom.getText().isBlank()) {
+            btnIncluirCom.setEnabled(false);
+        } else {
+            btnIncluirCom.setEnabled(true);
+        }
+    }
+
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

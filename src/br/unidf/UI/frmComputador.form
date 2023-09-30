@@ -185,9 +185,6 @@
       </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="txtCodigoIDCom">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtCodigoIDComActionPerformed"/>
-      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="DocumenUtil.getTextField()"/>
       </AuxValues>
@@ -267,6 +264,9 @@
       </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="txtTamanhoMonitorCom">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtTamanhoMonitorComActionPerformed"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="DocumenUtil.getTextField()"/>
       </AuxValues>
