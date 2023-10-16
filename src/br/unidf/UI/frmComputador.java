@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -102,39 +103,18 @@ public class frmComputador extends javax.swing.JFrame {
         btnMostrarTodosCom.setText("Mostrar Todos");
         btnMostrarTodosCom.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMostrarTodosComActionPerformed(evt);
+                dgvComputadoresMouseClicked(evt);
             }
         });
 
         jLabel3.setText("Tamanho do Monitor");
 
-        tableComputer.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
-            },
-            new String [] {
-                "Código (ID)", "Tamanho do Monitor", "Velocidade"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Long.class, java.lang.Double.class, java.lang.Integer.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+        tableComputer.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableComputerMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tableComputer);
-        if (tableComputer.getColumnModel().getColumnCount() > 0) {
-            tableComputer.getColumnModel().getColumn(0).setResizable(false);
-            tableComputer.getColumnModel().getColumn(0).setHeaderValue("Código (ID)");
-            tableComputer.getColumnModel().getColumn(1).setResizable(false);
-            tableComputer.getColumnModel().getColumn(1).setHeaderValue("Tamanho do Monitor");
-            tableComputer.getColumnModel().getColumn(2).setResizable(false);
-            tableComputer.getColumnModel().getColumn(2).setHeaderValue("Velocidade");
-        }
 
         btnLimparCom.setMnemonic('L');
         btnLimparCom.setText("Limpar");
@@ -264,18 +244,20 @@ public class frmComputador extends javax.swing.JFrame {
         if (this.txtCodigoIDCom.isEnabled())
             showMessage("Não é possivel atualizar sem ter realizado uma pesquisado antes.");
         else {
-            ComputadorDTO computadorDTO = getFields();
-            this.computadorDAL.excluirComputador(computadorDTO.getComId());
-            showMessage("Dado excluido com sucesso!!!");
-            btnLimparComActionPerformed(evt);
+            if (showConfirmDialog("Deseja Sair do Sistema?", "Aplicativo Computador") == JOptionPane.YES_OPTION) {
+                ComputadorDTO computadorDTO = getFields();
+                this.computadorDAL.excluirComputador(computadorDTO.getComId());
+                showMessage("Dado excluido com sucesso!!!");
+                btnLimparComActionPerformed(evt);
+            }
             this.clearAllFields();
         }
     }//GEN-LAST:event_btnExcluirComActionPerformed
 
-    private void btnMostrarTodosComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarTodosComActionPerformed
+    private void dgvComputadoresMouseClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dgvComputadoresMouseClicked
         this.computadorDTOs = this.computadorDAL.selecionarListaComputadores();
         this.tableComputer.setModel(new ComputarModel(this.computadorDTOs));
-    }//GEN-LAST:event_btnMostrarTodosComActionPerformed
+    }//GEN-LAST:event_dgvComputadoresMouseClicked
 
     private void btnLimparComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparComActionPerformed
         this.txtCodigoIDCom.setEditable(true);
@@ -284,7 +266,8 @@ public class frmComputador extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLimparComActionPerformed
 
     private void btnPesquisarComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarComActionPerformed
-        if (this.txtCodigoIDCom.getText().isBlank()) {
+        if (this.txtCodigoIDCom.getText().isEmpty()) {
+            showMessage("Campos vazios! Favor preencher os campos.");
             return;
         }
         
@@ -295,6 +278,17 @@ public class frmComputador extends javax.swing.JFrame {
             return;
         }
         
+        setFieldsFormInclusion(computadorDTO);
+    }//GEN-LAST:event_btnPesquisarComActionPerformed
+
+    private void tableComputerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableComputerMouseClicked
+        final int selectedRow = this.tableComputer.getSelectedRow();
+        if (selectedRow != -1) {
+            setFieldsFormInclusion(this.computadorDTOs.get(selectedRow));
+        }
+    }//GEN-LAST:event_tableComputerMouseClicked
+
+    private void setFieldsFormInclusion(ComputadorDTO computadorDTO) {
         this.txtCodigoIDCom.setText(computadorDTO.getComId().toString());
         this.txtTamanhoMonitorCom.setText(computadorDTO.getComTamanhoMonitor().toString());
         this.txtVelocidadeCom.setText(computadorDTO.getComVelocidade().toString());
@@ -305,22 +299,22 @@ public class frmComputador extends javax.swing.JFrame {
         this.btnIncluirCom.setEnabled(false);
         this.btnExcluirCom.setEnabled(true);
         this.btnAlterarCom.setEnabled(true);
-    }//GEN-LAST:event_btnPesquisarComActionPerformed
+    }
 
     private ComputadorDTO getFields() {
         Integer tamanhoMonitor = null;
         Integer velocidade = null;
         Integer id = null;
 
-        if (!this.txtCodigoIDCom.getText().isBlank()) {
+        if (this.txtCodigoIDCom.getText() != null && !this.txtCodigoIDCom.getText().trim().isEmpty()) {
             id = Integer.valueOf(this.txtCodigoIDCom.getText());
         }
 
-        if (!this.txtTamanhoMonitorCom.getText().isBlank()) {
+        if (this.txtTamanhoMonitorCom.getText() != null && !this.txtTamanhoMonitorCom.getText().trim().isEmpty()) {
             tamanhoMonitor = Integer.valueOf(this.txtTamanhoMonitorCom.getText());
         }
 
-        if (!this.txtVelocidadeCom.getText().isBlank()) {
+        if (this.txtVelocidadeCom.getText() != null && !this.txtVelocidadeCom.getText().trim().isEmpty()) {
             velocidade = Integer.valueOf(this.txtVelocidadeCom.getText());
         }
 
@@ -351,7 +345,6 @@ public class frmComputador extends javax.swing.JFrame {
         
         this.btnLimparCom.setToolTipText("Limpar todos os campos");
         
-        this.tableComputer.setModel(new ComputarModel(Collections.EMPTY_LIST));
         
         DocumentListener documentListener = new DocumentListener() {
             @Override
@@ -375,8 +368,8 @@ public class frmComputador extends javax.swing.JFrame {
     }
     
     private void isValidInclude(){
-       if (txtTamanhoMonitorCom.getText().isBlank()
-                || txtVelocidadeCom.getText().isBlank()) {
+       if (txtTamanhoMonitorCom.getText().trim().isEmpty()
+                || txtVelocidadeCom.getText().trim().isEmpty()) {
             btnIncluirCom.setEnabled(false);
         } else {
             btnIncluirCom.setEnabled(true);
@@ -406,134 +399,6 @@ public class frmComputador extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(frmComputador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
