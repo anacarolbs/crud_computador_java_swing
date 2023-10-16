@@ -221,13 +221,16 @@ public class frmComputador extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSairComActionPerformed
 
     private void btnIncluirComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIncluirComActionPerformed
-        if (this.btnAlterarCom.isEnabled()
+        if (this.txtCodigoIDCom.isEditable() 
+                && this.btnAlterarCom.isEnabled()
                 || this.btnExcluirCom.isEnabled())
             return;
         
         ComputadorDTO computadorDTO = getFields();
         computadorDTO.setComId(null);
         this.computadorDAL.incluirComputador(computadorDTO);
+        
+        updateListComputerDAL();
     }//GEN-LAST:event_btnIncluirComActionPerformed
 
     private void btnAlterarComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarComActionPerformed
@@ -238,6 +241,9 @@ public class frmComputador extends javax.swing.JFrame {
             this.computadorDAL.alterarComputador(computadorDTO);
             showMessage("Dados atualizado com sucesso!!!");
         }
+        
+        btnLimparComActionPerformed(evt);
+        updateListComputerDAL();
     }//GEN-LAST:event_btnAlterarComActionPerformed
 
     private void btnExcluirComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirComActionPerformed
@@ -252,11 +258,17 @@ public class frmComputador extends javax.swing.JFrame {
             }
             this.clearAllFields();
         }
+        
+        updateListComputerDAL();
     }//GEN-LAST:event_btnExcluirComActionPerformed
 
-    private void dgvComputadoresMouseClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dgvComputadoresMouseClicked
+    private void updateListComputerDAL() {
         this.computadorDTOs = this.computadorDAL.selecionarListaComputadores();
         this.tableComputer.setModel(new ComputarModel(this.computadorDTOs));
+    }
+
+    private void dgvComputadoresMouseClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dgvComputadoresMouseClicked
+        updateListComputerDAL();
     }//GEN-LAST:event_dgvComputadoresMouseClicked
 
     private void btnLimparComActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparComActionPerformed
@@ -367,9 +379,11 @@ public class frmComputador extends javax.swing.JFrame {
         this.txtVelocidadeCom.getDocument().addDocumentListener(documentListener);
     }
     
-    private void isValidInclude(){
-       if (txtTamanhoMonitorCom.getText().trim().isEmpty()
-                || txtVelocidadeCom.getText().trim().isEmpty()) {
+    private void isValidInclude() {
+        if ((!txtCodigoIDCom.isEditable()
+                || !txtCodigoIDCom.isEnabled())
+                && (txtTamanhoMonitorCom.getText().trim().isEmpty()
+                || txtVelocidadeCom.getText().trim().isEmpty())) {
             btnIncluirCom.setEnabled(false);
         } else {
             btnIncluirCom.setEnabled(true);

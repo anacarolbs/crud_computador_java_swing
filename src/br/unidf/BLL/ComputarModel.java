@@ -3,7 +3,6 @@ package br.unidf.BLL;
 import br.unidf.DTO.ComputadorDTO;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 
 public class ComputarModel
         extends AbstractTableModel {
@@ -45,9 +44,5 @@ public class ComputarModel
             default:
                 return null;
         }
-    }
-    
-    public ComputadorDTO getSelectObj(int rowIndex) {
-       return this.computadorDTOs.get(rowIndex);
     }
 }
