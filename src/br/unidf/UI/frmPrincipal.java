@@ -136,7 +136,7 @@ public class frmPrincipal extends javax.swing.JFrame {
     private frmComputador frmComputador;
     
     private void inserirIcone() {
-//       setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("iconComputador.png")));
+       setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("iconComputador.png")));
     }
 
 }
