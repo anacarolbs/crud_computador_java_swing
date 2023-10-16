@@ -14,9 +14,10 @@ public class ComputarModel
         this.computadorDTOs = computadorDTOs;
     }
     
-    
     @Override
     public int getRowCount() {
+        if(this.computadorDTOs == null ||this.computadorDTOs.isEmpty()) return 0;
+        
         return this.computadorDTOs.size();
     }
 
@@ -44,5 +45,4 @@ public class ComputarModel
                 return null;
         }
     }
-
 }
