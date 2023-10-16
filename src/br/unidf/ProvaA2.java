@@ -1,6 +1,6 @@
 package br.unidf;
 
-import br.unidf.UI.frmComputador;
+import br.unidf.UI.frmPrincipal;
 
 /**
  * Ana Carolina Barbosa de Souza - 27649865
@@ -11,7 +11,7 @@ import br.unidf.UI.frmComputador;
  */
 public class ProvaA2 {
     public static void main(String[] args) {
-        frmComputador fComputador = new frmComputador();
-        fComputador.setVisible(true);
+        frmPrincipal fp = new frmPrincipal();
+        fp.setVisible(true);
     }    
 }
